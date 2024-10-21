@@ -1,15 +1,16 @@
 // @generated
 /// Generated client implementations.
-#[cfg(not(target_arch = "wasm32"))]
-pub mod validation_api_client {
+pub mod replication_api_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    /** Replication API
+*/
     #[derive(Debug, Clone)]
-    pub struct ValidationApiClient<T> {
+    pub struct ReplicationApiClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl ValidationApiClient<tonic::transport::Channel> {
+    impl ReplicationApiClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -20,7 +21,7 @@ pub mod validation_api_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> ValidationApiClient<T>
+    impl<T> ReplicationApiClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -38,7 +39,7 @@ pub mod validation_api_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> ValidationApiClient<InterceptedService<T, F>>
+        ) -> ReplicationApiClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -52,7 +53,7 @@ pub mod validation_api_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            ValidationApiClient::new(InterceptedService::new(inner, interceptor))
+            ReplicationApiClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -85,11 +86,13 @@ pub mod validation_api_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        pub async fn validate_key_packages(
+        /** Subscribe to envelopes
+*/
+        pub async fn subscribe_envelopes(
             &mut self,
-            request: impl tonic::IntoRequest<super::ValidateKeyPackagesRequest>,
+            request: impl tonic::IntoRequest<super::SubscribeEnvelopesRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ValidateKeyPackagesResponse>,
+            tonic::Response<tonic::codec::Streaming<super::SubscribeEnvelopesResponse>>,
             tonic::Status,
         > {
             self.inner
@@ -103,23 +106,57 @@ pub mod validation_api_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateKeyPackages",
+                "/xmtp.xmtpv4.message_api.ReplicationApi/SubscribeEnvelopes",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
                     GrpcMethod::new(
-                        "xmtp.mls_validation.v1.ValidationApi",
-                        "ValidateKeyPackages",
+                        "xmtp.xmtpv4.message_api.ReplicationApi",
+                        "SubscribeEnvelopes",
+                    ),
+                );
+            self.inner.server_streaming(req, path, codec).await
+        }
+        /** Query envelopes
+*/
+        pub async fn query_envelopes(
+            &mut self,
+            request: impl tonic::IntoRequest<super::QueryEnvelopesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::QueryEnvelopesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/xmtp.xmtpv4.message_api.ReplicationApi/QueryEnvelopes",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "xmtp.xmtpv4.message_api.ReplicationApi",
+                        "QueryEnvelopes",
                     ),
                 );
             self.inner.unary(req, path, codec).await
         }
-        pub async fn validate_group_messages(
+        /** Publish envelope
+*/
+        pub async fn publish_payer_envelopes(
             &mut self,
-            request: impl tonic::IntoRequest<super::ValidateGroupMessagesRequest>,
+            request: impl tonic::IntoRequest<super::PublishPayerEnvelopesRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ValidateGroupMessagesResponse>,
+            tonic::Response<super::PublishPayerEnvelopesResponse>,
             tonic::Status,
         > {
             self.inner
@@ -133,23 +170,25 @@ pub mod validation_api_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateGroupMessages",
+                "/xmtp.xmtpv4.message_api.ReplicationApi/PublishPayerEnvelopes",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
                     GrpcMethod::new(
-                        "xmtp.mls_validation.v1.ValidationApi",
-                        "ValidateGroupMessages",
+                        "xmtp.xmtpv4.message_api.ReplicationApi",
+                        "PublishPayerEnvelopes",
                     ),
                 );
             self.inner.unary(req, path, codec).await
         }
-        pub async fn get_association_state(
+        /** Get inbox ids
+*/
+        pub async fn get_inbox_ids(
             &mut self,
-            request: impl tonic::IntoRequest<super::GetAssociationStateRequest>,
+            request: impl tonic::IntoRequest<super::GetInboxIdsRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::GetAssociationStateResponse>,
+            tonic::Response<super::GetInboxIdsResponse>,
             tonic::Status,
         > {
             self.inner
@@ -163,108 +202,14 @@ pub mod validation_api_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.mls_validation.v1.ValidationApi/GetAssociationState",
+                "/xmtp.xmtpv4.message_api.ReplicationApi/GetInboxIds",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
                     GrpcMethod::new(
-                        "xmtp.mls_validation.v1.ValidationApi",
-                        "GetAssociationState",
-                    ),
-                );
-            self.inner.unary(req, path, codec).await
-        }
-        pub async fn validate_inbox_id_key_packages(
-            &mut self,
-            request: impl tonic::IntoRequest<super::ValidateKeyPackagesRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ValidateInboxIdKeyPackagesResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateInboxIdKeyPackages",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "xmtp.mls_validation.v1.ValidationApi",
-                        "ValidateInboxIdKeyPackages",
-                    ),
-                );
-            self.inner.unary(req, path, codec).await
-        }
-        pub async fn validate_inbox_ids(
-            &mut self,
-            request: impl tonic::IntoRequest<super::ValidateInboxIdsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ValidateInboxIdsResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateInboxIds",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "xmtp.mls_validation.v1.ValidationApi",
-                        "ValidateInboxIds",
-                    ),
-                );
-            self.inner.unary(req, path, codec).await
-        }
-        pub async fn verify_smart_contract_wallet_signatures(
-            &mut self,
-            request: impl tonic::IntoRequest<
-                super::super::super::identity::api::v1::VerifySmartContractWalletSignaturesRequest,
-            >,
-        ) -> std::result::Result<
-            tonic::Response<
-                super::super::super::identity::api::v1::VerifySmartContractWalletSignaturesResponse,
-            >,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.mls_validation.v1.ValidationApi/VerifySmartContractWalletSignatures",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "xmtp.mls_validation.v1.ValidationApi",
-                        "VerifySmartContractWalletSignatures",
+                        "xmtp.xmtpv4.message_api.ReplicationApi",
+                        "GetInboxIds",
                     ),
                 );
             self.inner.unary(req, path, codec).await
@@ -272,69 +217,69 @@ pub mod validation_api_client {
     }
 }
 /// Generated server implementations.
-#[cfg(not(target_arch = "wasm32"))]
-pub mod validation_api_server {
+pub mod replication_api_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with ValidationApiServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with ReplicationApiServer.
     #[async_trait]
-    pub trait ValidationApi: Send + Sync + 'static {
-        async fn validate_key_packages(
+    pub trait ReplicationApi: Send + Sync + 'static {
+        /// Server streaming response type for the SubscribeEnvelopes method.
+        type SubscribeEnvelopesStream: tonic::codegen::tokio_stream::Stream<
+                Item = std::result::Result<
+                    super::SubscribeEnvelopesResponse,
+                    tonic::Status,
+                >,
+            >
+            + Send
+            + 'static;
+        /** Subscribe to envelopes
+*/
+        async fn subscribe_envelopes(
             &self,
-            request: tonic::Request<super::ValidateKeyPackagesRequest>,
+            request: tonic::Request<super::SubscribeEnvelopesRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ValidateKeyPackagesResponse>,
+            tonic::Response<Self::SubscribeEnvelopesStream>,
             tonic::Status,
         >;
-        async fn validate_group_messages(
+        /** Query envelopes
+*/
+        async fn query_envelopes(
             &self,
-            request: tonic::Request<super::ValidateGroupMessagesRequest>,
+            request: tonic::Request<super::QueryEnvelopesRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ValidateGroupMessagesResponse>,
+            tonic::Response<super::QueryEnvelopesResponse>,
             tonic::Status,
         >;
-        async fn get_association_state(
+        /** Publish envelope
+*/
+        async fn publish_payer_envelopes(
             &self,
-            request: tonic::Request<super::GetAssociationStateRequest>,
+            request: tonic::Request<super::PublishPayerEnvelopesRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::GetAssociationStateResponse>,
+            tonic::Response<super::PublishPayerEnvelopesResponse>,
             tonic::Status,
         >;
-        async fn validate_inbox_id_key_packages(
+        /** Get inbox ids
+*/
+        async fn get_inbox_ids(
             &self,
-            request: tonic::Request<super::ValidateKeyPackagesRequest>,
+            request: tonic::Request<super::GetInboxIdsRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ValidateInboxIdKeyPackagesResponse>,
-            tonic::Status,
-        >;
-        async fn validate_inbox_ids(
-            &self,
-            request: tonic::Request<super::ValidateInboxIdsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ValidateInboxIdsResponse>,
-            tonic::Status,
-        >;
-        async fn verify_smart_contract_wallet_signatures(
-            &self,
-            request: tonic::Request<
-                super::super::super::identity::api::v1::VerifySmartContractWalletSignaturesRequest,
-            >,
-        ) -> std::result::Result<
-            tonic::Response<
-                super::super::super::identity::api::v1::VerifySmartContractWalletSignaturesResponse,
-            >,
+            tonic::Response<super::GetInboxIdsResponse>,
             tonic::Status,
         >;
     }
+    /** Replication API
+*/
     #[derive(Debug)]
-    pub struct ValidationApiServer<T: ValidationApi> {
+    pub struct ReplicationApiServer<T: ReplicationApi> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T: ValidationApi> ValidationApiServer<T> {
+    impl<T: ReplicationApi> ReplicationApiServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -385,9 +330,9 @@ pub mod validation_api_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for ValidationApiServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for ReplicationApiServer<T>
     where
-        T: ValidationApi,
+        T: ReplicationApi,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -402,25 +347,27 @@ pub mod validation_api_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateKeyPackages" => {
+                "/xmtp.xmtpv4.message_api.ReplicationApi/SubscribeEnvelopes" => {
                     #[allow(non_camel_case_types)]
-                    struct ValidateKeyPackagesSvc<T: ValidationApi>(pub Arc<T>);
+                    struct SubscribeEnvelopesSvc<T: ReplicationApi>(pub Arc<T>);
                     impl<
-                        T: ValidationApi,
-                    > tonic::server::UnaryService<super::ValidateKeyPackagesRequest>
-                    for ValidateKeyPackagesSvc<T> {
-                        type Response = super::ValidateKeyPackagesResponse;
+                        T: ReplicationApi,
+                    > tonic::server::ServerStreamingService<
+                        super::SubscribeEnvelopesRequest,
+                    > for SubscribeEnvelopesSvc<T> {
+                        type Response = super::SubscribeEnvelopesResponse;
+                        type ResponseStream = T::SubscribeEnvelopesStream;
                         type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
+                            tonic::Response<Self::ResponseStream>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::ValidateKeyPackagesRequest>,
+                            request: tonic::Request<super::SubscribeEnvelopesRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as ValidationApi>::validate_key_packages(&inner, request)
+                                <T as ReplicationApi>::subscribe_envelopes(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -432,7 +379,53 @@ pub mod validation_api_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = ValidateKeyPackagesSvc(inner);
+                        let method = SubscribeEnvelopesSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.server_streaming(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/xmtp.xmtpv4.message_api.ReplicationApi/QueryEnvelopes" => {
+                    #[allow(non_camel_case_types)]
+                    struct QueryEnvelopesSvc<T: ReplicationApi>(pub Arc<T>);
+                    impl<
+                        T: ReplicationApi,
+                    > tonic::server::UnaryService<super::QueryEnvelopesRequest>
+                    for QueryEnvelopesSvc<T> {
+                        type Response = super::QueryEnvelopesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::QueryEnvelopesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ReplicationApi>::query_envelopes(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = QueryEnvelopesSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -448,25 +441,25 @@ pub mod validation_api_server {
                     };
                     Box::pin(fut)
                 }
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateGroupMessages" => {
+                "/xmtp.xmtpv4.message_api.ReplicationApi/PublishPayerEnvelopes" => {
                     #[allow(non_camel_case_types)]
-                    struct ValidateGroupMessagesSvc<T: ValidationApi>(pub Arc<T>);
+                    struct PublishPayerEnvelopesSvc<T: ReplicationApi>(pub Arc<T>);
                     impl<
-                        T: ValidationApi,
-                    > tonic::server::UnaryService<super::ValidateGroupMessagesRequest>
-                    for ValidateGroupMessagesSvc<T> {
-                        type Response = super::ValidateGroupMessagesResponse;
+                        T: ReplicationApi,
+                    > tonic::server::UnaryService<super::PublishPayerEnvelopesRequest>
+                    for PublishPayerEnvelopesSvc<T> {
+                        type Response = super::PublishPayerEnvelopesResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::ValidateGroupMessagesRequest>,
+                            request: tonic::Request<super::PublishPayerEnvelopesRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as ValidationApi>::validate_group_messages(
+                                <T as ReplicationApi>::publish_payer_envelopes(
                                         &inner,
                                         request,
                                     )
@@ -481,7 +474,7 @@ pub mod validation_api_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = ValidateGroupMessagesSvc(inner);
+                        let method = PublishPayerEnvelopesSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -497,26 +490,25 @@ pub mod validation_api_server {
                     };
                     Box::pin(fut)
                 }
-                "/xmtp.mls_validation.v1.ValidationApi/GetAssociationState" => {
+                "/xmtp.xmtpv4.message_api.ReplicationApi/GetInboxIds" => {
                     #[allow(non_camel_case_types)]
-                    struct GetAssociationStateSvc<T: ValidationApi>(pub Arc<T>);
+                    struct GetInboxIdsSvc<T: ReplicationApi>(pub Arc<T>);
                     impl<
-                        T: ValidationApi,
-                    > tonic::server::UnaryService<super::GetAssociationStateRequest>
-                    for GetAssociationStateSvc<T> {
-                        type Response = super::GetAssociationStateResponse;
+                        T: ReplicationApi,
+                    > tonic::server::UnaryService<super::GetInboxIdsRequest>
+                    for GetInboxIdsSvc<T> {
+                        type Response = super::GetInboxIdsResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::GetAssociationStateRequest>,
+                            request: tonic::Request<super::GetInboxIdsRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as ValidationApi>::get_association_state(&inner, request)
-                                    .await
+                                <T as ReplicationApi>::get_inbox_ids(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -527,156 +519,7 @@ pub mod validation_api_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = GetAssociationStateSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateInboxIdKeyPackages" => {
-                    #[allow(non_camel_case_types)]
-                    struct ValidateInboxIdKeyPackagesSvc<T: ValidationApi>(pub Arc<T>);
-                    impl<
-                        T: ValidationApi,
-                    > tonic::server::UnaryService<super::ValidateKeyPackagesRequest>
-                    for ValidateInboxIdKeyPackagesSvc<T> {
-                        type Response = super::ValidateInboxIdKeyPackagesResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::ValidateKeyPackagesRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as ValidationApi>::validate_inbox_id_key_packages(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = ValidateInboxIdKeyPackagesSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/xmtp.mls_validation.v1.ValidationApi/ValidateInboxIds" => {
-                    #[allow(non_camel_case_types)]
-                    struct ValidateInboxIdsSvc<T: ValidationApi>(pub Arc<T>);
-                    impl<
-                        T: ValidationApi,
-                    > tonic::server::UnaryService<super::ValidateInboxIdsRequest>
-                    for ValidateInboxIdsSvc<T> {
-                        type Response = super::ValidateInboxIdsResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::ValidateInboxIdsRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as ValidationApi>::validate_inbox_ids(&inner, request)
-                                    .await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = ValidateInboxIdsSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/xmtp.mls_validation.v1.ValidationApi/VerifySmartContractWalletSignatures" => {
-                    #[allow(non_camel_case_types)]
-                    struct VerifySmartContractWalletSignaturesSvc<T: ValidationApi>(
-                        pub Arc<T>,
-                    );
-                    impl<
-                        T: ValidationApi,
-                    > tonic::server::UnaryService<
-                        super::super::super::identity::api::v1::VerifySmartContractWalletSignaturesRequest,
-                    > for VerifySmartContractWalletSignaturesSvc<T> {
-                        type Response = super::super::super::identity::api::v1::VerifySmartContractWalletSignaturesResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::super::super::identity::api::v1::VerifySmartContractWalletSignaturesRequest,
-                            >,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as ValidationApi>::verify_smart_contract_wallet_signatures(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = VerifySmartContractWalletSignaturesSvc(inner);
+                        let method = GetInboxIdsSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -710,7 +553,7 @@ pub mod validation_api_server {
             }
         }
     }
-    impl<T: ValidationApi> Clone for ValidationApiServer<T> {
+    impl<T: ReplicationApi> Clone for ReplicationApiServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -722,7 +565,7 @@ pub mod validation_api_server {
             }
         }
     }
-    impl<T: ValidationApi> tonic::server::NamedService for ValidationApiServer<T> {
-        const NAME: &'static str = "xmtp.mls_validation.v1.ValidationApi";
+    impl<T: ReplicationApi> tonic::server::NamedService for ReplicationApiServer<T> {
+        const NAME: &'static str = "xmtp.xmtpv4.message_api.ReplicationApi";
     }
 }
