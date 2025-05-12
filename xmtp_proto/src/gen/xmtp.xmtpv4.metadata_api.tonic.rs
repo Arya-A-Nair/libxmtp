@@ -1,15 +1,16 @@
 // @generated
 /// Generated client implementations.
-#[cfg(not(target_arch = "wasm32"))]
-pub mod identity_api_client {
+pub mod metadata_api_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    /** Metadata for distributed tracing, debugging and synchronization
+*/
     #[derive(Debug, Clone)]
-    pub struct IdentityApiClient<T> {
+    pub struct MetadataApiClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl IdentityApiClient<tonic::transport::Channel> {
+    impl MetadataApiClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -20,7 +21,7 @@ pub mod identity_api_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> IdentityApiClient<T>
+    impl<T> MetadataApiClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -38,7 +39,7 @@ pub mod identity_api_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> IdentityApiClient<InterceptedService<T, F>>
+        ) -> MetadataApiClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -52,7 +53,7 @@ pub mod identity_api_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            IdentityApiClient::new(InterceptedService::new(inner, interceptor))
+            MetadataApiClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -85,11 +86,12 @@ pub mod identity_api_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        pub async fn publish_identity_update(
+        ///
+        pub async fn get_sync_cursor(
             &mut self,
-            request: impl tonic::IntoRequest<super::PublishIdentityUpdateRequest>,
+            request: impl tonic::IntoRequest<super::GetSyncCursorRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::PublishIdentityUpdateResponse>,
+            tonic::Response<super::GetSyncCursorResponse>,
             tonic::Status,
         > {
             self.inner
@@ -103,23 +105,24 @@ pub mod identity_api_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.identity.api.v1.IdentityApi/PublishIdentityUpdate",
+                "/xmtp.xmtpv4.metadata_api.MetadataApi/GetSyncCursor",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
                     GrpcMethod::new(
-                        "xmtp.identity.api.v1.IdentityApi",
-                        "PublishIdentityUpdate",
+                        "xmtp.xmtpv4.metadata_api.MetadataApi",
+                        "GetSyncCursor",
                     ),
                 );
             self.inner.unary(req, path, codec).await
         }
-        pub async fn get_identity_updates(
+        ///
+        pub async fn subscribe_sync_cursor(
             &mut self,
-            request: impl tonic::IntoRequest<super::GetIdentityUpdatesRequest>,
+            request: impl tonic::IntoRequest<super::GetSyncCursorRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::GetIdentityUpdatesResponse>,
+            tonic::Response<tonic::codec::Streaming<super::GetSyncCursorResponse>>,
             tonic::Status,
         > {
             self.inner
@@ -133,125 +136,61 @@ pub mod identity_api_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.identity.api.v1.IdentityApi/GetIdentityUpdates",
+                "/xmtp.xmtpv4.metadata_api.MetadataApi/SubscribeSyncCursor",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
                     GrpcMethod::new(
-                        "xmtp.identity.api.v1.IdentityApi",
-                        "GetIdentityUpdates",
+                        "xmtp.xmtpv4.metadata_api.MetadataApi",
+                        "SubscribeSyncCursor",
                     ),
                 );
-            self.inner.unary(req, path, codec).await
-        }
-        pub async fn get_inbox_ids(
-            &mut self,
-            request: impl tonic::IntoRequest<super::GetInboxIdsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetInboxIdsResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.identity.api.v1.IdentityApi/GetInboxIds",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("xmtp.identity.api.v1.IdentityApi", "GetInboxIds"),
-                );
-            self.inner.unary(req, path, codec).await
-        }
-        pub async fn verify_smart_contract_wallet_signatures(
-            &mut self,
-            request: impl tonic::IntoRequest<
-                super::VerifySmartContractWalletSignaturesRequest,
-            >,
-        ) -> std::result::Result<
-            tonic::Response<super::VerifySmartContractWalletSignaturesResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/xmtp.identity.api.v1.IdentityApi/VerifySmartContractWalletSignatures",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "xmtp.identity.api.v1.IdentityApi",
-                        "VerifySmartContractWalletSignatures",
-                    ),
-                );
-            self.inner.unary(req, path, codec).await
+            self.inner.server_streaming(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-#[cfg(not(target_arch = "wasm32"))]
-pub mod identity_api_server {
+pub mod metadata_api_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with IdentityApiServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with MetadataApiServer.
     #[async_trait]
-    pub trait IdentityApi: Send + Sync + 'static {
-        async fn publish_identity_update(
+    pub trait MetadataApi: Send + Sync + 'static {
+        ///
+        async fn get_sync_cursor(
             &self,
-            request: tonic::Request<super::PublishIdentityUpdateRequest>,
+            request: tonic::Request<super::GetSyncCursorRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::PublishIdentityUpdateResponse>,
+            tonic::Response<super::GetSyncCursorResponse>,
             tonic::Status,
         >;
-        async fn get_identity_updates(
+        /// Server streaming response type for the SubscribeSyncCursor method.
+        type SubscribeSyncCursorStream: tonic::codegen::tokio_stream::Stream<
+                Item = std::result::Result<super::GetSyncCursorResponse, tonic::Status>,
+            >
+            + Send
+            + 'static;
+        ///
+        async fn subscribe_sync_cursor(
             &self,
-            request: tonic::Request<super::GetIdentityUpdatesRequest>,
+            request: tonic::Request<super::GetSyncCursorRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::GetIdentityUpdatesResponse>,
-            tonic::Status,
-        >;
-        async fn get_inbox_ids(
-            &self,
-            request: tonic::Request<super::GetInboxIdsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetInboxIdsResponse>,
-            tonic::Status,
-        >;
-        async fn verify_smart_contract_wallet_signatures(
-            &self,
-            request: tonic::Request<super::VerifySmartContractWalletSignaturesRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::VerifySmartContractWalletSignaturesResponse>,
+            tonic::Response<Self::SubscribeSyncCursorStream>,
             tonic::Status,
         >;
     }
+    /** Metadata for distributed tracing, debugging and synchronization
+*/
     #[derive(Debug)]
-    pub struct IdentityApiServer<T: IdentityApi> {
+    pub struct MetadataApiServer<T: MetadataApi> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T: IdentityApi> IdentityApiServer<T> {
+    impl<T: MetadataApi> MetadataApiServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -302,9 +241,9 @@ pub mod identity_api_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for IdentityApiServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for MetadataApiServer<T>
     where
-        T: IdentityApi,
+        T: MetadataApi,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -319,26 +258,25 @@ pub mod identity_api_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/xmtp.identity.api.v1.IdentityApi/PublishIdentityUpdate" => {
+                "/xmtp.xmtpv4.metadata_api.MetadataApi/GetSyncCursor" => {
                     #[allow(non_camel_case_types)]
-                    struct PublishIdentityUpdateSvc<T: IdentityApi>(pub Arc<T>);
+                    struct GetSyncCursorSvc<T: MetadataApi>(pub Arc<T>);
                     impl<
-                        T: IdentityApi,
-                    > tonic::server::UnaryService<super::PublishIdentityUpdateRequest>
-                    for PublishIdentityUpdateSvc<T> {
-                        type Response = super::PublishIdentityUpdateResponse;
+                        T: MetadataApi,
+                    > tonic::server::UnaryService<super::GetSyncCursorRequest>
+                    for GetSyncCursorSvc<T> {
+                        type Response = super::GetSyncCursorResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::PublishIdentityUpdateRequest>,
+                            request: tonic::Request<super::GetSyncCursorRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as IdentityApi>::publish_identity_update(&inner, request)
-                                    .await
+                                <T as MetadataApi>::get_sync_cursor(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -349,7 +287,7 @@ pub mod identity_api_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = PublishIdentityUpdateSvc(inner);
+                        let method = GetSyncCursorSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -365,25 +303,26 @@ pub mod identity_api_server {
                     };
                     Box::pin(fut)
                 }
-                "/xmtp.identity.api.v1.IdentityApi/GetIdentityUpdates" => {
+                "/xmtp.xmtpv4.metadata_api.MetadataApi/SubscribeSyncCursor" => {
                     #[allow(non_camel_case_types)]
-                    struct GetIdentityUpdatesSvc<T: IdentityApi>(pub Arc<T>);
+                    struct SubscribeSyncCursorSvc<T: MetadataApi>(pub Arc<T>);
                     impl<
-                        T: IdentityApi,
-                    > tonic::server::UnaryService<super::GetIdentityUpdatesRequest>
-                    for GetIdentityUpdatesSvc<T> {
-                        type Response = super::GetIdentityUpdatesResponse;
+                        T: MetadataApi,
+                    > tonic::server::ServerStreamingService<super::GetSyncCursorRequest>
+                    for SubscribeSyncCursorSvc<T> {
+                        type Response = super::GetSyncCursorResponse;
+                        type ResponseStream = T::SubscribeSyncCursorStream;
                         type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
+                            tonic::Response<Self::ResponseStream>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::GetIdentityUpdatesRequest>,
+                            request: tonic::Request<super::GetSyncCursorRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as IdentityApi>::get_identity_updates(&inner, request)
+                                <T as MetadataApi>::subscribe_sync_cursor(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -395,7 +334,7 @@ pub mod identity_api_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = GetIdentityUpdatesSvc(inner);
+                        let method = SubscribeSyncCursorSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -406,106 +345,7 @@ pub mod identity_api_server {
                                 max_decoding_message_size,
                                 max_encoding_message_size,
                             );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/xmtp.identity.api.v1.IdentityApi/GetInboxIds" => {
-                    #[allow(non_camel_case_types)]
-                    struct GetInboxIdsSvc<T: IdentityApi>(pub Arc<T>);
-                    impl<
-                        T: IdentityApi,
-                    > tonic::server::UnaryService<super::GetInboxIdsRequest>
-                    for GetInboxIdsSvc<T> {
-                        type Response = super::GetInboxIdsResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::GetInboxIdsRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as IdentityApi>::get_inbox_ids(&inner, request).await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = GetInboxIdsSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/xmtp.identity.api.v1.IdentityApi/VerifySmartContractWalletSignatures" => {
-                    #[allow(non_camel_case_types)]
-                    struct VerifySmartContractWalletSignaturesSvc<T: IdentityApi>(
-                        pub Arc<T>,
-                    );
-                    impl<
-                        T: IdentityApi,
-                    > tonic::server::UnaryService<
-                        super::VerifySmartContractWalletSignaturesRequest,
-                    > for VerifySmartContractWalletSignaturesSvc<T> {
-                        type Response = super::VerifySmartContractWalletSignaturesResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<
-                                super::VerifySmartContractWalletSignaturesRequest,
-                            >,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as IdentityApi>::verify_smart_contract_wallet_signatures(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = VerifySmartContractWalletSignaturesSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
+                        let res = grpc.server_streaming(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
@@ -528,7 +368,7 @@ pub mod identity_api_server {
             }
         }
     }
-    impl<T: IdentityApi> Clone for IdentityApiServer<T> {
+    impl<T: MetadataApi> Clone for MetadataApiServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -540,7 +380,7 @@ pub mod identity_api_server {
             }
         }
     }
-    impl<T: IdentityApi> tonic::server::NamedService for IdentityApiServer<T> {
-        const NAME: &'static str = "xmtp.identity.api.v1.IdentityApi";
+    impl<T: MetadataApi> tonic::server::NamedService for MetadataApiServer<T> {
+        const NAME: &'static str = "xmtp.xmtpv4.metadata_api.MetadataApi";
     }
 }

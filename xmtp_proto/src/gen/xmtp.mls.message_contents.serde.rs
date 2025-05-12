@@ -585,11 +585,17 @@ impl serde::Serialize for GroupMembership {
         if !self.members.is_empty() {
             len += 1;
         }
+        if !self.failed_installations.is_empty() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("xmtp.mls.message_contents.GroupMembership", len)?;
         if !self.members.is_empty() {
             let v: std::collections::HashMap<_, _> = self.members.iter()
                 .map(|(k, v)| (k, v.to_string())).collect();
             struct_ser.serialize_field("members", &v)?;
+        }
+        if !self.failed_installations.is_empty() {
+            struct_ser.serialize_field("failedInstallations", &self.failed_installations.iter().map(pbjson::private::base64::encode).collect::<Vec<_>>())?;
         }
         struct_ser.end()
     }
@@ -602,11 +608,14 @@ impl<'de> serde::Deserialize<'de> for GroupMembership {
     {
         const FIELDS: &[&str] = &[
             "members",
+            "failed_installations",
+            "failedInstallations",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             Members,
+            FailedInstallations,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -629,6 +638,7 @@ impl<'de> serde::Deserialize<'de> for GroupMembership {
                     {
                         match value {
                             "members" => Ok(GeneratedField::Members),
+                            "failedInstallations" | "failed_installations" => Ok(GeneratedField::FailedInstallations),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -649,6 +659,7 @@ impl<'de> serde::Deserialize<'de> for GroupMembership {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut members__ = None;
+                let mut failed_installations__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Members => {
@@ -660,10 +671,20 @@ impl<'de> serde::Deserialize<'de> for GroupMembership {
                                     .into_iter().map(|(k,v)| (k, v.0)).collect()
                             );
                         }
+                        GeneratedField::FailedInstallations => {
+                            if failed_installations__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("failedInstallations"));
+                            }
+                            failed_installations__ = 
+                                Some(map_.next_value::<Vec<::pbjson::private::BytesDeserialize<_>>>()?
+                                    .into_iter().map(|x| x.0).collect())
+                            ;
+                        }
                     }
                 }
                 Ok(GroupMembership {
                     members: members__.unwrap_or_default(),
+                    failed_installations: failed_installations__.unwrap_or_default(),
                 })
             }
         }
@@ -2252,341 +2273,6 @@ impl<'de> serde::Deserialize<'de> for membership_policy::BasePolicy {
         deserializer.deserialize_any(GeneratedVisitor)
     }
 }
-impl serde::Serialize for MessageHistoryKeyType {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if self.key.is_some() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("xmtp.mls.message_contents.MessageHistoryKeyType", len)?;
-        if let Some(v) = self.key.as_ref() {
-            match v {
-                message_history_key_type::Key::Chacha20Poly1305(v) => {
-                    #[allow(clippy::needless_borrow)]
-                    #[allow(clippy::needless_borrows_for_generic_args)]
-                    struct_ser.serialize_field("chacha20Poly1305", pbjson::private::base64::encode(&v).as_str())?;
-                }
-            }
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for MessageHistoryKeyType {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "chacha20_poly1305",
-            "chacha20Poly1305",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            Chacha20Poly1305,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "chacha20Poly1305" | "chacha20_poly1305" => Ok(GeneratedField::Chacha20Poly1305),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = MessageHistoryKeyType;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct xmtp.mls.message_contents.MessageHistoryKeyType")
-            }
-
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<MessageHistoryKeyType, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut key__ = None;
-                while let Some(k) = map_.next_key()? {
-                    match k {
-                        GeneratedField::Chacha20Poly1305 => {
-                            if key__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("chacha20Poly1305"));
-                            }
-                            key__ = map_.next_value::<::std::option::Option<::pbjson::private::BytesDeserialize<_>>>()?.map(|x| message_history_key_type::Key::Chacha20Poly1305(x.0));
-                        }
-                    }
-                }
-                Ok(MessageHistoryKeyType {
-                    key: key__,
-                })
-            }
-        }
-        deserializer.deserialize_struct("xmtp.mls.message_contents.MessageHistoryKeyType", FIELDS, GeneratedVisitor)
-    }
-}
-impl serde::Serialize for MessageHistoryReply {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if !self.request_id.is_empty() {
-            len += 1;
-        }
-        if !self.url.is_empty() {
-            len += 1;
-        }
-        if self.encryption_key.is_some() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("xmtp.mls.message_contents.MessageHistoryReply", len)?;
-        if !self.request_id.is_empty() {
-            struct_ser.serialize_field("requestId", &self.request_id)?;
-        }
-        if !self.url.is_empty() {
-            struct_ser.serialize_field("url", &self.url)?;
-        }
-        if let Some(v) = self.encryption_key.as_ref() {
-            struct_ser.serialize_field("encryptionKey", v)?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for MessageHistoryReply {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "request_id",
-            "requestId",
-            "url",
-            "encryption_key",
-            "encryptionKey",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            RequestId,
-            Url,
-            EncryptionKey,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "requestId" | "request_id" => Ok(GeneratedField::RequestId),
-                            "url" => Ok(GeneratedField::Url),
-                            "encryptionKey" | "encryption_key" => Ok(GeneratedField::EncryptionKey),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = MessageHistoryReply;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct xmtp.mls.message_contents.MessageHistoryReply")
-            }
-
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<MessageHistoryReply, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut request_id__ = None;
-                let mut url__ = None;
-                let mut encryption_key__ = None;
-                while let Some(k) = map_.next_key()? {
-                    match k {
-                        GeneratedField::RequestId => {
-                            if request_id__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("requestId"));
-                            }
-                            request_id__ = Some(map_.next_value()?);
-                        }
-                        GeneratedField::Url => {
-                            if url__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("url"));
-                            }
-                            url__ = Some(map_.next_value()?);
-                        }
-                        GeneratedField::EncryptionKey => {
-                            if encryption_key__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("encryptionKey"));
-                            }
-                            encryption_key__ = map_.next_value()?;
-                        }
-                    }
-                }
-                Ok(MessageHistoryReply {
-                    request_id: request_id__.unwrap_or_default(),
-                    url: url__.unwrap_or_default(),
-                    encryption_key: encryption_key__,
-                })
-            }
-        }
-        deserializer.deserialize_struct("xmtp.mls.message_contents.MessageHistoryReply", FIELDS, GeneratedVisitor)
-    }
-}
-impl serde::Serialize for MessageHistoryRequest {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if !self.request_id.is_empty() {
-            len += 1;
-        }
-        if !self.pin_code.is_empty() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("xmtp.mls.message_contents.MessageHistoryRequest", len)?;
-        if !self.request_id.is_empty() {
-            struct_ser.serialize_field("requestId", &self.request_id)?;
-        }
-        if !self.pin_code.is_empty() {
-            struct_ser.serialize_field("pinCode", &self.pin_code)?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for MessageHistoryRequest {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "request_id",
-            "requestId",
-            "pin_code",
-            "pinCode",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            RequestId,
-            PinCode,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "requestId" | "request_id" => Ok(GeneratedField::RequestId),
-                            "pinCode" | "pin_code" => Ok(GeneratedField::PinCode),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = MessageHistoryRequest;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct xmtp.mls.message_contents.MessageHistoryRequest")
-            }
-
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<MessageHistoryRequest, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut request_id__ = None;
-                let mut pin_code__ = None;
-                while let Some(k) = map_.next_key()? {
-                    match k {
-                        GeneratedField::RequestId => {
-                            if request_id__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("requestId"));
-                            }
-                            request_id__ = Some(map_.next_value()?);
-                        }
-                        GeneratedField::PinCode => {
-                            if pin_code__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("pinCode"));
-                            }
-                            pin_code__ = Some(map_.next_value()?);
-                        }
-                    }
-                }
-                Ok(MessageHistoryRequest {
-                    request_id: request_id__.unwrap_or_default(),
-                    pin_code: pin_code__.unwrap_or_default(),
-                })
-            }
-        }
-        deserializer.deserialize_struct("xmtp.mls.message_contents.MessageHistoryRequest", FIELDS, GeneratedVisitor)
-    }
-}
 impl serde::Serialize for MetadataPolicy {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -3605,11 +3291,14 @@ impl serde::Serialize for plaintext_envelope::V2 {
                     #[allow(clippy::needless_borrows_for_generic_args)]
                     struct_ser.serialize_field("content", pbjson::private::base64::encode(&v).as_str())?;
                 }
-                plaintext_envelope::v2::MessageType::Request(v) => {
-                    struct_ser.serialize_field("request", v)?;
+                plaintext_envelope::v2::MessageType::DeviceSyncRequest(v) => {
+                    struct_ser.serialize_field("deviceSyncRequest", v)?;
                 }
-                plaintext_envelope::v2::MessageType::Reply(v) => {
-                    struct_ser.serialize_field("reply", v)?;
+                plaintext_envelope::v2::MessageType::DeviceSyncReply(v) => {
+                    struct_ser.serialize_field("deviceSyncReply", v)?;
+                }
+                plaintext_envelope::v2::MessageType::UserPreferenceUpdate(v) => {
+                    struct_ser.serialize_field("userPreferenceUpdate", v)?;
                 }
             }
         }
@@ -3626,16 +3315,21 @@ impl<'de> serde::Deserialize<'de> for plaintext_envelope::V2 {
             "idempotency_key",
             "idempotencyKey",
             "content",
-            "request",
-            "reply",
+            "device_sync_request",
+            "deviceSyncRequest",
+            "device_sync_reply",
+            "deviceSyncReply",
+            "user_preference_update",
+            "userPreferenceUpdate",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             IdempotencyKey,
             Content,
-            Request,
-            Reply,
+            DeviceSyncRequest,
+            DeviceSyncReply,
+            UserPreferenceUpdate,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3659,8 +3353,9 @@ impl<'de> serde::Deserialize<'de> for plaintext_envelope::V2 {
                         match value {
                             "idempotencyKey" | "idempotency_key" => Ok(GeneratedField::IdempotencyKey),
                             "content" => Ok(GeneratedField::Content),
-                            "request" => Ok(GeneratedField::Request),
-                            "reply" => Ok(GeneratedField::Reply),
+                            "deviceSyncRequest" | "device_sync_request" => Ok(GeneratedField::DeviceSyncRequest),
+                            "deviceSyncReply" | "device_sync_reply" => Ok(GeneratedField::DeviceSyncReply),
+                            "userPreferenceUpdate" | "user_preference_update" => Ok(GeneratedField::UserPreferenceUpdate),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3696,18 +3391,25 @@ impl<'de> serde::Deserialize<'de> for plaintext_envelope::V2 {
                             }
                             message_type__ = map_.next_value::<::std::option::Option<::pbjson::private::BytesDeserialize<_>>>()?.map(|x| plaintext_envelope::v2::MessageType::Content(x.0));
                         }
-                        GeneratedField::Request => {
+                        GeneratedField::DeviceSyncRequest => {
                             if message_type__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("request"));
+                                return Err(serde::de::Error::duplicate_field("deviceSyncRequest"));
                             }
-                            message_type__ = map_.next_value::<::std::option::Option<_>>()?.map(plaintext_envelope::v2::MessageType::Request)
+                            message_type__ = map_.next_value::<::std::option::Option<_>>()?.map(plaintext_envelope::v2::MessageType::DeviceSyncRequest)
 ;
                         }
-                        GeneratedField::Reply => {
+                        GeneratedField::DeviceSyncReply => {
                             if message_type__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("reply"));
+                                return Err(serde::de::Error::duplicate_field("deviceSyncReply"));
                             }
-                            message_type__ = map_.next_value::<::std::option::Option<_>>()?.map(plaintext_envelope::v2::MessageType::Reply)
+                            message_type__ = map_.next_value::<::std::option::Option<_>>()?.map(plaintext_envelope::v2::MessageType::DeviceSyncReply)
+;
+                        }
+                        GeneratedField::UserPreferenceUpdate => {
+                            if message_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("userPreferenceUpdate"));
+                            }
+                            message_type__ = map_.next_value::<::std::option::Option<_>>()?.map(plaintext_envelope::v2::MessageType::UserPreferenceUpdate)
 ;
                         }
                     }
